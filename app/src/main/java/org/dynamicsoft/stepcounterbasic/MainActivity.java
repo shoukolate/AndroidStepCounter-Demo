@@ -16,6 +16,7 @@
 
 package org.dynamicsoft.stepcounterbasic;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -24,6 +25,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.widget.TextView;
 
@@ -41,15 +43,15 @@ public class MainActivity extends Activity implements SensorEventListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mStepsSinceReboot = (TextView) findViewById(R.id.stepssincereboot);
-        mCaloriesBurntSinceReboot = (TextView) findViewById(R.id.caloriesburntsincereboot);
+        mStepsSinceReboot = findViewById(R.id.stepssincereboot);
+        mCaloriesBurntSinceReboot = findViewById(R.id.caloriesburntsincereboot);
 
-        mSensorManager = (SensorManager)
-                this.getSystemService(Context.SENSOR_SERVICE);
-        if (mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
-                != null) {
-            mSensor =
-                    mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+        mSensorManager = (SensorManager) this.getSystemService(Context.SENSOR_SERVICE);
+        assert mSensorManager != null;
+        if (mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER) != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+            }
             isSensorPresent = true;
         } else {
             isSensorPresent = false;
@@ -92,6 +94,7 @@ public class MainActivity extends Activity implements SensorEventListener {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onSensorChanged(SensorEvent event) {
         String unit;
